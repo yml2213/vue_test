@@ -6,12 +6,12 @@ const routes = [
     redirect: '/home',
     name: 'Main',
     component: () => import('../views/Main.vue'),
-    //children: [
-    //  {
-    //    path: '/home',
-    //    name: 'home',
-    //    component: () => import('../views/home/Home.vue'),
-    //  },
+    children: [
+      {
+        path: '/home',
+        name: 'home',
+        component: () => import('../views/home/Home.vue'),
+      }]
     //  {
     //    path: '/user',
     //    name: 'user',
@@ -33,7 +33,6 @@ const routes = [
     //    component: () => import('../views/Page2.vue'),
     //  },
     //]
-    children: []
   }
   , {
     path: '/login',

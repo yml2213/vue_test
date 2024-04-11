@@ -8,7 +8,7 @@ export default createStore({
     tabsList: [{
       path: '/',
       name: 'home',
-      label: '首页',
+      label: '主程序',
       icon: 'home'
     }],
     UserList: [],
@@ -53,18 +53,6 @@ export default createStore({
       const menu = JSON.parse(localMenu);
       state.menu = menu;
       const menuArray = [];
-      menu.forEach(item => {
-        if (item.children) {
-          item.children = item.children.map(item => {
-            item.component = () => import(`../views/${item.url}`);
-            return item;
-          });
-          menuArray.push(...item.children);
-        } else {
-          item.component = () => import(`../views/${item.url}`);
-          menuArray.push(item)
-        }
-      })
       menuArray.forEach(item => {
         router.addRoute('Main', item)
       })
@@ -74,7 +62,7 @@ export default createStore({
       localStorage.removeItem('menu');
     },
     setToken(state, val) {
-      Cookie.set('token', state.token);
+      localStorage.setItem('token',val)
       state.token = val;
     },
     clearToken(state) {

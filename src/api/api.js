@@ -1,37 +1,18 @@
 import request from './request'
 
 export default {
-  getTableData(params) {
+  uploadTxt(fileContent){
     return request({
-      url: '/home/getTableData',
-      method: 'get',
-      data: params,
-      mock: true
-    })
+        url: '/upload',
+        method: 'post',
+        data: fileContent
+  })
   },
-  getCountData(params) {
-    return request({
-      url: '/home/getCountData',
-      method: 'get',
-      data: params,
-      mock: true
-    })
-  },
-  getEchartsData(params) {
-    return request({
-      url: '/home/getOrderData',
-      method: 'get',
-      data: params,
-      mock: true
-    })
-  },
-
   getUserData(params) {
     return request({
           url: '/user/getList',
           method: 'get',
           data: params,
-          mock: false
     })
   },
   createUser(params) {
@@ -39,7 +20,6 @@ export default {
       url: '/user/add',
       method: 'post',
       data: params,
-      mock: false
     })
   },
   updateUser(params) {
@@ -47,7 +27,6 @@ export default {
       url: '/user/edit',
       method: 'post',
       data: params,
-      mock: false
     })
   },
   deleteUser(params) {
@@ -55,7 +34,6 @@ export default {
       url: '/user/del',
       method: 'post',
       data: params,
-      mock: false
     })
   },
   getMenu(params){
@@ -63,7 +41,6 @@ export default {
       url: '/permission/getMenu',
       method: 'post',
       data: params,
-      mock: false
     })
   }
 }

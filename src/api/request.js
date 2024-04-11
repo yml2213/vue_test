@@ -30,15 +30,8 @@ function request(options) {
   if (options.method.toLowerCase() === 'get') {
     options.params = options.data;
   }
-  ////保存mock
-  let isMock = config.mock;
-  if (typeof options.mock !== 'undefined') {
-    isMock = options.mock;
-  }
   if (config.env === 'prod') {
     service.defaults.baseURL = config.baseApi;
-  } else {
-    service.defaults.baseURL = isMock ? config.mockApi : config.baseApi;
   }
   return service(options);
 }

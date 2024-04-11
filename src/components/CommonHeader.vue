@@ -2,13 +2,13 @@
 <template>
   <el-header>
     <div class="l-content">
-      <el-button size="small" plain style="margin-right: 10px" @click="handleCollapse">
+      <el-button size="small" plain style="margin-right: 10px" >
         <el-icon>
           <Menu/>
         </el-icon>
       </el-button>
       <el-breadcrumb separator="/" class="bread">
-        <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+        <el-breadcrumb-item :to="{ path: '/' }">主程序</el-breadcrumb-item>
         <el-breadcrumb-item :to="current.path" v-if="current">{{ current.label }}</el-breadcrumb-item>
       </el-breadcrumb>
     </div>
@@ -19,7 +19,6 @@
     </span>
         <template #dropdown>
           <el-dropdown-menu>
-            <el-dropdown-item>个人中心</el-dropdown-item>
             <el-dropdown-item @click="logout">退出</el-dropdown-item>
           </el-dropdown-menu>
         </template>

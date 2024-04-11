@@ -4,7 +4,6 @@ import App from './App.vue'
 import ElementPlus, {ElMessage} from 'element-plus'
 import router from './router'
 import './assets/less/index.less'
-import './api/mockjs.js'
 import 'element-plus/dist/index.css'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
@@ -28,7 +27,9 @@ function checkRouter(path) {
 
 router.beforeEach((to, from, next) => {
   store.commit('getToken');
-  const token = store.state.token;
+
+  const token = localStorage.getItem('token');
+  console.log(token)
   if (!token && to.name !== "login") {
     ElMessage.error("当前用户未登录，请登录");
     next({name: 'login'});

@@ -17,13 +17,22 @@
 
 <script>
 import {defineComponent, getCurrentInstance, onMounted, ref, reactive} from "vue";
-import * as echarts from 'echarts'
 import {useStore} from "vuex";
 import {useRouter} from "vue-router";
 import {ElMessage} from "element-plus";
 
 export default {
   setup() {
+    const menu= [
+      {
+        "path": "/home",
+        "name": "home",
+        "label": "主程序",
+        "icon": "HomeFilled",
+        "url": "/home/Home.vue"
+      },
+
+    ]
     const {proxy} = getCurrentInstance();
     const store = useStore();
     const router = useRouter();
@@ -33,15 +42,11 @@ export default {
     });
     const login = async () => {
       console.log(loginForm.username, loginForm.password);
-      let res = await proxy.$api.getMenu(loginForm);
-      console.log(res);
-      if (res) {
-        store.commit('setMenu', res.menu);
+        store.commit('setMenu', menu);
         store.commit('addMenu', router);
-        store.commit('setToken', res.token);
+        store.commit('setToken', 123123);
         await router.push("home");
         ElMessage.success("登录成功");
-      }
     }
     return {
       loginForm,

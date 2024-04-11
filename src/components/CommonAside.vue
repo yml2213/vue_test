@@ -4,11 +4,9 @@
         class="el-menu-vertical-demo"
         background-color="#545c64"
         text-color="#fff"
-        :collapse="!$store.state.isCollapse"
         :collapse-transition="false"
     >
-      <h3 v-show="$store.state.isCollapse">后台管理系统 </h3>
-      <h3 v-show="!$store.state.isCollapse">后台 </h3>
+      <h3>评论系统 </h3>
       <el-menu-item :index="item.path" v-for="item in noChildren()"
                     :key="item.path"
                     @click="clickMenu(item)">
@@ -49,44 +47,9 @@ export default {
       {
         path: '/',
         name: 'home',
-        label: "首页",
+        label: "主程序",
         icon: 'HomeFilled',
         url: 'Home.vue'
-      },
-      {
-        path: '/mall',
-        name: 'mall',
-        label: "商品管理",
-        icon: 'video-play',
-        url: 'Mall.vue'
-      },
-      {
-        path: '/user',
-        name: 'user',
-        label: "用户管理",
-        icon: 'user',
-        url: 'User.vue'
-      },
-      {
-        label: '其他',
-        icon: 'QuestionFilled',
-        path: '/other',
-        children: [
-          {
-            path: "/page1",
-            name: "page1",
-            label: "页面1",
-            icon: "setting",
-            url: "PageOne.vue"
-          },
-          {
-            path: "/page2",
-            name: "page2",
-            label: "页面2",
-            icon: "setting",
-            url: "PageTwo.vue"
-          },
-        ]
       }
     ];
     const router = useRouter();
