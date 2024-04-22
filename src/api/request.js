@@ -15,7 +15,6 @@ service.interceptors.request.use((req) => {
 //请求后
 service.interceptors.response.use((res) => {
   const {code, data} = res.data;
-  console.log(res.data);
   if (code === 200) {
     return data;
   } else {

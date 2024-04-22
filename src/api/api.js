@@ -1,18 +1,25 @@
 import request from './request'
 
 export default {
-    uploadTxt(fileContent) {
+
+
+    upSettings(params) {
         return request({
-            url: '/upload',
-            method: 'post',
-            data: fileContent
-        })
-    },
-    getData(params) {
-        return request({
-            url: '/getData',
+            url: '/upSettings',
             method: 'post',
             data: params
+        })
+    },
+    doTask() {
+        return request({
+            url: '/doTask',
+            method: 'post',
+        })
+    },
+    stopTask(){
+        return request({
+            url: '/stop',
+            method: 'get',
         })
     },
 

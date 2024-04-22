@@ -72,16 +72,7 @@
               <el-table-column prop="api_st" label="Api St" width="600"/>
             </el-table>
           </div>
-          <div class="pagination-container">
-            <el-pagination background
-                           :current-page="currentPage"
-                           :page-sizes="[10, 20, 30, 50]"
-                           :page-size="pageSize"
-                           layout="total, sizes, prev, pager, next, jumper"
-                           :total="userDatatotalRows"
-                           @size-change="handleSizeChange"
-                           @current-change="handleCurrentChange"/>
-          </div>
+
         </div>
         <el-input
             v-model="comments"
@@ -95,31 +86,20 @@
       <el-main>
         <div class="custom-table-container">
           <el-table :data="tableData" style="width: 90%; height: 700px;">
-            <el-table-column fixed prop="col1" label="Date" width="150"/>
-            <el-table-column prop="co2" label="Name" width="120"/>
-            <el-table-column prop="col3" label="State" width="120"/>
+            <el-table-column fixed prop="count" label="账号" width="150"/>
+            <el-table-column prop="comments" label="评论内容" width="120"/>
+            <el-table-column prop="status" label="评论状态" width="120"/>
 
           </el-table>
         </div>
-        <div class="custom-pagination-container">
-          <el-pagination background
-                         :current-page="currentPage"
-                         :page-sizes="[10, 20, 30, 50]"
-                         :page-size="pageSize"
-                         layout="total, sizes, prev, pager, next, jumper"
-                         :total="userDatatotalRows"
-                         @size-change="handleSizeChange"
-                         @current-change="handleCurrentChange"/>
-        </div>
+
       </el-main>
     </el-container>
   </div>
 </template>
 
 <script setup>
-import {defineComponent, getCurrentInstance, onMounted, ref, reactive} from "vue";
-import {useStore} from "vuex";
-import {useRouter} from "vue-router";
+import {defineComponent, getCurrentInstance, onMounted, ref, reactive, watch} from "vue";
 import {ElMessage, ElLoading} from "element-plus";
 
 const showUpload = ref(true);
@@ -131,21 +111,16 @@ const userData = [
   {token: '', salt: '', did: '', egid: '', api_st: ''},
   // 可以有更多的数据对象
 ];
-const comments = ref('');
-const inputUrl = ref('');
-const inputProxy = ref('');
+const comments = ref('2222');
+const inputUrl = ref('22');
+const inputProxy = ref('22');
 const inputCommentCount = ref(3);
-
-const tableData = [];
-const nodeData = {userData, inputUrl, inputProxy, inputCommentCount}
+const myData = ref({});
+const tableData = ref([]);
 
 const ACCEPTED_EXTENSIONS = ['txt'];
 const loadingInstance = ref(null); // 加载框实例
 const {proxy} = getCurrentInstance();
-const currentPage = ref(1); // 当前页数
-const pageSize = ref(10); // 每页条数
-const userDatatotalRows = ref(userData.length); // 总条数
-
 
 function beforeUpload(file) {
   const extension = file.name.split('.').pop().toLowerCase();
@@ -167,60 +142,51 @@ function beforeUpload(file) {
       loadingInstance.value = ElLoading.service({
         text: '解析中，请稍后', // 加载框文字提示
       });
+      let flag = true;
       // 模拟上传，这里用 setTimeout 模拟上传过程
-      setTimeout(() => {
-        try {
-          readUploadedFile(fileContent).then((res) => {
-            this.userData = res.data;
-            //展示出表单
-            showUpload.value = false;
-            const dataArray = fileContent.split("\n");
-            dataArray.forEach(data => {
-              // 再次以 "----" 分割数据，并将分割后的值赋值给 userData 数组中的对象属性
-              const parts = data.split('----');
-              userData.push({
-                token: parts[0],
-                salt: parts[1],
-                did: parts[2],
-                egid: parts[3],
-                api_st: parts[4],
-              });
-              console.log(userData)
+      try {
+        //展示出表单
+        const dataArray = fileContent.split("\n");
+        for (let data of dataArray) {
+          // 再次以 "----" 分割数据，并将分割后的值赋值给 userData 数组中的对象属性
+          const parts = data.split('----');
+          if (parts.length == 6 || parts.length == 1) {
+            flag = true;
+            userData.push({
+              token: parts[0],
+              salt: parts[1],
+              did: parts[2],
+              egid: parts[3],
+              api_st: parts[4],
             });
-            console.log(fileContent);
-          }).catch((res) => {
-
-            const dataArray = fileContent.split("\n");
-            dataArray.forEach(data => {
-              // 再次以 "----" 分割数据，并将分割后的值赋值给 userData 数组中的对象属性
-              const parts = data.split('----');
-              userData.push({
-                token: parts[0],
-                salt: parts[1],
-                did: parts[2],
-                egid: parts[3],
-                api_st: parts[4],
-              });
-              console.log(userData)
-            });
-
-            //展示出表单
-            showUpload.value = false;
-            ElMessage.error('文件上传失败');
-          })
-        } catch (error) {
-          console.error('Error reading file:', error);
-          ElMessage.error('文件上传失败');
-        } finally {
-          // 隐藏加载框
-          loadingInstance.value?.close();
-          //清空数据
-          this.fileList = [];
+            console.log(userData)
+          } else {
+            flag = false;
+            break;
+          }
         }
-      }, 2000); // 模拟上传延迟2秒
-    };
+
+        if (flag) {
+          showUpload.value = false;
+          ElMessage.success("文件解析成功")
+        } else {
+          ElMessage.error('请检查格式,文件解析失败');
+        }
+        return flag;
+
+      } catch (error) {
+        ElMessage.error('文件解析失败');
+      } finally {
+        // 隐藏加载框
+        loadingInstance.value?.close();
+        console.log(userData.length);
+        userDatatotalRows.value = userData.length - 1;
+        //清空数据
+        this.fileList = [];
+      }
+    }
     reader.onerror = () => {
-      console.error('Error reading file:', reader.error);
+      console.error('文件解析失败:', reader.error);
     };
     reader.readAsText(file);
   }
@@ -240,16 +206,15 @@ const startFlag = ref(false);
 
 function start() {
 
-  const myData = {
-
-    "userData":userData.value,
+   myData.value = {
+    "userData": userData.value,
     "inputUrl": inputUrl.value,
     "inputProxy": inputProxy.value,
-    "inputCommentCount":inputCommentCount.value
+    "inputCommentCount": inputCommentCount.value,
+    "comments":comments.value
   }
-  console.log(`===============`)
 
-  if (userData.value == '') {
+  if (userData.length == 1) {
     ElMessage.error("账号参数不正确！");
     return;
   }
@@ -261,15 +226,10 @@ function start() {
     ElMessage.error("代理未配置！");
     return;
   }
-  const getUserData = async () => {
-    let res = await proxy.$api.getData(myData);
-    // console.log(res)
-    // console.log(`--------`)
-
-    this.tableData = res.data;
-    console.log(this.tableData);
-
-  };
+  if (comments.value == '') {
+    ElMessage.error("评论内容为空！");
+    return;
+  }
 
   startFlag.value = true;
   const startId = document.getElementById("startId");
@@ -277,12 +237,64 @@ function start() {
   startId.disabled = true; // 禁用按钮
   startId.removeEventListener("click", this.start); // 取消点击事件绑定
   startId.setAttribute('type', 'danger'); // 设置按钮类型为 "danger"
-  ElMessage.warning("运行中，请勿刷新或者退出软件！");
-  getUserData();
 
+  //上传配置
+  upSettings();
+  //开启定时任务
+  startTimer();
 
 }
+const upSettings = async () => {
+  try {
+    let data = await proxy.$api.upSettings(myData.value);
+    ElMessage.success("上传配置成功,马上开始执行任务，请勿刷新或者退出软件！");
 
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    ElMessage.error("获取数据失败：" + error.message);
+  }
+
+};
+
+const getUserOperLog = async () => {
+  try {
+    let data = await proxy.$api.doTask();
+    tableData.value = data;
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    ElMessage.error("获取数据失败：" + error.message);
+  }
+
+};
+
+let timerId = null; // Initialize timerId variable
+
+const startTimer = () => {
+  timerId = setInterval(() => {
+    getUserOperLog(); // Call getUserData function every 2 seconds
+  }, 10000);
+};
+
+const stopTimer = () => {
+  clearInterval(timerId);
+  stopTask();
+  // Stop the timer
+};
+// 监听 tableData 的变化
+watch(tableData, (newValue, oldValue) => {
+  //tableData.value = newValue;
+});
+
+const stopTask = async () => {
+  try {
+    let data = await proxy.$api.stopTask();
+    console.log(data)
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    ElMessage.error("获取数据失败：" + error.message);
+  }
+
+};
 
 function stop() {
   if (startFlag.value) {
@@ -292,17 +304,7 @@ function stop() {
   startId.innerText = "开始运行";
   startId.disabled = false; // 禁用该元素
   ElMessage.success("停止成功");
-}
-
-
-// 分页组件大小变化时触发
-function handleSizeChange(val) {
-  pageSize.value = val;
-}
-
-// 分页组件当前页变化时触发
-function handleCurrentChange(val) {
-  currentPage.value = val;
+  stopTimer()
 }
 
 /**
