@@ -95,12 +95,10 @@
       <el-main>
         <div class="custom-table-container">
           <el-table :data="tableData" style="width: 90%; height: 700px;">
-            <el-table-column fixed prop="date" label="Date" width="150"/>
-            <el-table-column prop="name" label="Name" width="120"/>
-            <el-table-column prop="state" label="State" width="120"/>
-            <el-table-column prop="city" label="City" width="320"/>
-            <el-table-column prop="address" label="Address" width="600"/>
-            <el-table-column prop="zip" label="Zip" width="120"/>
+            <el-table-column fixed prop="col1" label="Date" width="150"/>
+            <el-table-column prop="co2" label="Name" width="120"/>
+            <el-table-column prop="col3" label="State" width="120"/>
+
           </el-table>
         </div>
         <div class="custom-pagination-container">
@@ -138,7 +136,7 @@ const inputUrl = ref('');
 const inputProxy = ref('');
 const inputCommentCount = ref(3);
 
-
+const tableData = [];
 const nodeData = {userData, inputUrl, inputProxy, inputCommentCount}
 
 const ACCEPTED_EXTENSIONS = ['txt'];
@@ -242,11 +240,15 @@ const startFlag = ref(false);
 
 function start() {
 
-  const {userData, inputUrl, inputProxy, inputCommentCount} = nodeData;
+  const myData = {
+
+    "userData":userData.value,
+    "inputUrl": inputUrl.value,
+    "inputProxy": inputProxy.value,
+    "inputCommentCount":inputCommentCount.value
+  }
   console.log(`===============`)
-  console.log({userData, inputUrl, inputProxy, inputCommentCount})
-  console.log(inputUrl.value)
-  console.log(inputProxy.value)
+
   if (userData.value == '') {
     ElMessage.error("账号参数不正确！");
     return;
@@ -260,8 +262,13 @@ function start() {
     return;
   }
   const getUserData = async () => {
-    let res = await proxy.$api.getData(nodeData);
-    console.log(res.data)
+    let res = await proxy.$api.getData(myData);
+    // console.log(res)
+    // console.log(`--------`)
+
+    this.tableData = res.data;
+    console.log(this.tableData);
+
   };
 
   startFlag.value = true;
@@ -271,7 +278,8 @@ function start() {
   startId.removeEventListener("click", this.start); // 取消点击事件绑定
   startId.setAttribute('type', 'danger'); // 设置按钮类型为 "danger"
   ElMessage.warning("运行中，请勿刷新或者退出软件！");
-  getUserData()
+  getUserData();
+
 
 }
 
